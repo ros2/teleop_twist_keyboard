@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright 2011 Brown University Robotics. All rights reserved.
+#
 # Software License Agreement (BSD License 2.0)
 #
 # Redistribution and use in source and binary forms, with or without
