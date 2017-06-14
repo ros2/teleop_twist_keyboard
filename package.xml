@@ -2,15 +2,18 @@
 <package format="2">
   <name>teleop_twist_keyboard</name>
   <version>0.6.0</version>
-  <description>Generic keyboard teleop for twist robots.</description>
+  <license>BSD</license>
+  <description>
+    A robot-agnostic teleoperation node to convert keyboard commands to Twist
+    messages.
+  </description>
 
   <maintainer email="namniart@gmail.com">Austin Hendrix</maintainer>
-
-  <license>BSD</license>
+  <author>Graylin Trevor Jay</author>
 
   <url type="website">http://wiki.ros.org/teleop_twist_keyboard</url>
-
-  <author>Graylin Trevor Jay</author>
+  <url type="development">https://github.com/ros2/teleop_twist_keyboard</url>
+  <url type="bugtracker">https://github.com/ros2/teleop_twist_keyboard/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
