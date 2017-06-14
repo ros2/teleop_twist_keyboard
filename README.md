@@ -1,11 +1,13 @@
 # teleop_twist_keyboard
-Generic Keyboard Teleop for ROS
+Generic Keyboard Teleoperation for ROS
+
 #Launch
 To run: `rosrun teleop_twist_keyboard teleop_twist_keyboard.py`
 
 #Usage
 ```
-Reading from the keyboard  and Publishing to Twist!
+This node takes keypresses from the keyboard and publishes them as Twist
+messages. It works best with a US keyboard layout.
 ---------------------------
 Moving around:
    u    i    o
@@ -29,4 +31,3 @@ e/c : increase/decrease only angular speed by 10%
 
 CTRL-C to quit
 ```
-
