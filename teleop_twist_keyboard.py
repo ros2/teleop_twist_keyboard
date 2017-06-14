@@ -32,6 +32,7 @@
 import sys, select, termios, tty
 
 import rclpy
+from rclpy.qos import qos_profile_sensor_data
 
 from geometry_msgs.msg import Twist
 
@@ -110,7 +111,7 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(Twist, 'cmd_vel')
+    pub = node.create_publisher(Twist, 'cmd_vel', qos=qos_profile_sensor_data)
 
     speed = 0.5
     turn = 1.0
