@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>teleop_twist_keyboard</name>
   <version>0.6.0</version>
   <description>Generic keyboard teleop for twist robots.</description>
@@ -13,6 +13,9 @@
   <author>Graylin Trevor Jay</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>rospy</run_depend>
+
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+
+  <export> </export>
 </package>
