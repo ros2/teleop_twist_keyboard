@@ -29,16 +29,18 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('teleop_twist_keyboard')
+import sys, select, termios, tty
+
+import roslib
+roslib.load_manifest('teleop_twist_keyboard')
+
 import rospy
 
 from geometry_msgs.msg import Twist
 
-import sys, select, termios, tty
-
 msg = """
-This node takes keypresses from the keyboard and publishes them as Twist
-messages. It works best with a US keyboard layout.
+This node takes keypresses from the keyboard and publishes them
+as Twist messages. It works best with a US keyboard layout.
 ---------------------------
 Moving around:
    u    i    o
@@ -146,8 +148,12 @@ if __name__=="__main__":
                     break
 
             twist = Twist()
-            twist.linear.x = x*speed; twist.linear.y = y*speed; twist.linear.z = z*speed;
-            twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = th*turn
+            twist.linear.x = x*speed
+            twist.linear.y = y*speed
+            twist.linear.z = z*speed
+            twist.angular.x = 0
+            twist.angular.y = 0
+            twist.angular.z = th*turn
             pub.publish(twist)
 
     except:
@@ -155,8 +161,12 @@ if __name__=="__main__":
 
     finally:
         twist = Twist()
-        twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
-        twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
+        twist.linear.x = 0
+        twist.linear.y = 0
+        twist.linear.z = 0
+        twist.angular.x = 0
+        twist.angular.y = 0
+        twist.angular.z = 0
         pub.publish(twist)
 
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
