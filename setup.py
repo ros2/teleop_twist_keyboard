@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='teleop_twist_keyboard',
-    version='0.0.0',
+    version='0.6.0',
     packages=[],
     py_modules=[
         'teleop_twist_keyboard'
