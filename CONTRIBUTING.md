@@ -1,0 +1,1 @@
+Any contribution that you make to this repository will be under the [BSD License 2.0](https://opensource.org/licenses/BSD-2-Clause), as dictated by that license

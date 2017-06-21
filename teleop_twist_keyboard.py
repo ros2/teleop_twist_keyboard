@@ -30,12 +30,15 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys, select, termios, tty
+import select
+import sys
+import termios
+import tty
+
+from geometry_msgs.msg import Twist
 
 import rclpy
 from rclpy.qos import qos_profile_sensor_data
-
-from geometry_msgs.msg import Twist
 
 msg = """
 This node takes keypresses from the keyboard and publishes them
@@ -65,34 +68,35 @@ CTRL-C to quit
 """
 
 moveBindings = {
-    'i':(1,0,0,0),
-    'o':(1,0,0,-1),
-    'j':(0,0,0,1),
-    'l':(0,0,0,-1),
-    'u':(1,0,0,1),
-    ',':(-1,0,0,0),
-    '.':(-1,0,0,1),
-    'm':(-1,0,0,-1),
-    'O':(1,-1,0,0),
-    'I':(1,0,0,0),
-    'J':(0,1,0,0),
-    'L':(0,-1,0,0),
-    'U':(1,1,0,0),
-    '<':(-1,0,0,0),
-    '>':(-1,-1,0,0),
-    'M':(-1,1,0,0),
-    't':(0,0,1,0),
-    'b':(0,0,-1,0),
+    'i': (1, 0, 0, 0),
+    'o': (1, 0, 0, -1),
+    'j': (0, 0, 0, 1),
+    'l': (0, 0, 0, -1),
+    'u': (1, 0, 0, 1),
+    ',': (-1, 0, 0, 0),
+    '.': (-1, 0, 0, 1),
+    'm': (-1, 0, 0, -1),
+    'O': (1, -1, 0, 0),
+    'I': (1, 0, 0, 0),
+    'J': (0, 1, 0, 0),
+    'L': (0, -1, 0, 0),
+    'U': (1, 1, 0, 0),
+    '<': (-1, 0, 0, 0),
+    '>': (-1, -1, 0, 0),
+    'M': (-1, 1, 0, 0),
+    't': (0, 0, 1, 0),
+    'b': (0, 0, -1, 0),
 }
 
 speedBindings = {
-    'q':(1.1,1.1),
-    'z':(.9,.9),
-    'w':(1.1,1),
-    'x':(.9,1),
-    'e':(1,1.1),
-    'c':(1,.9),
+    'q': (1.1, 1.1),
+    'z': (.9, .9),
+    'w': (1.1, 1),
+    'x': (.9, 1),
+    'e': (1, 1.1),
+    'c': (1, .9),
 }
+
 
 def getKey(settings):
     tty.setraw(sys.stdin.fileno())
@@ -102,8 +106,8 @@ def getKey(settings):
     return key
 
 
-def vels(speed,turn):
-    return 'currently:\tspeed %s\tturn %s ' % (speed,turn)
+def vels(speed, turn):
+    return 'currently:\tspeed %s\tturn %s ' % (speed, turn)
 
 
 def main():
@@ -112,7 +116,8 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(Twist, 'cmd_vel', qos_profile=qos_profile_sensor_data)
+    pub = node.create_publisher(Twist, 'cmd_vel',
+                                qos_profile=qos_profile_sensor_data)
 
     speed = 0.5
     turn = 1.0
@@ -124,7 +129,7 @@ def main():
 
     try:
         print(msg)
-        print(vels(speed,turn))
+        print(vels(speed, turn))
         while True:
             key = getKey(settings)
             if key in moveBindings.keys():
@@ -136,7 +141,7 @@ def main():
                 speed = speed * speedBindings[key][0]
                 turn = turn * speedBindings[key][1]
 
-                print(vels(speed,turn))
+                print(vels(speed, turn))
                 if (status == 14):
                     print(msg)
                 status = (status + 1) % 15
@@ -149,12 +154,12 @@ def main():
                     break
 
             twist = Twist()
-            twist.linear.x = x*speed
-            twist.linear.y = y*speed
-            twist.linear.z = z*speed
+            twist.linear.x = x * speed
+            twist.linear.y = y * speed
+            twist.linear.z = z * speed
             twist.angular.x = 0.0
             twist.angular.y = 0.0
-            twist.angular.z = th*turn
+            twist.angular.z = th * turn
             pub.publish(twist)
 
     except:
@@ -173,5 +178,6 @@ def main():
 
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     main()
