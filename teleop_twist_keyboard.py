@@ -117,8 +117,8 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(Twist, 'cmd_vel',
-                                qos_profile=qos_profile_sensor_data)
+    pub = node.create_publisher(
+        Twist, 'cmd_vel', qos_profile=qos_profile_sensor_data)
 
     speed = 0.5
     turn = 1.0
