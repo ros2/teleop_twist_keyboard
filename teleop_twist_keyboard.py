@@ -1,5 +1,6 @@
-# Copyright 2011 Brown University Robotics. All rights reserved.
-# Copyright 2017 Open Source Robotics Foundation, Inc. All rights reserved.
+# Copyright 2011 Brown University Robotics.
+# Copyright 2017 Open Source Robotics Foundation, Inc.
+# All rights reserved.
 #
 # Software License Agreement (BSD License 2.0)
 #
