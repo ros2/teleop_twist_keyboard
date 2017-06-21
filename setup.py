@@ -1,7 +1,11 @@
+from ament_python.script_dir import install_scripts_to_libexec
 from setuptools import setup
 
+package_name = 'teleop_twist_keyboard'
+install_scripts_to_libexec(package_name)
+
 setup(
-    name='teleop_twist_keyboard',
+    name=package_name,
     version='0.6.0',
     packages=[],
     py_modules=[
