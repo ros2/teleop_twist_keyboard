@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-
 # Copyright 2011 Brown University Robotics. All rights reserved.
+# Copyright 2017 Open Source Robotics Foundation, Inc. All rights reserved.
 #
 # Software License Agreement (BSD License 2.0)
 #
@@ -104,7 +103,7 @@ def getKey(settings):
 
 
 def vels(speed,turn):
-    return "currently:\tspeed %s\tturn %s " % (speed,turn)
+    return 'currently:\tspeed %s\tturn %s ' % (speed,turn)
 
 
 def main():
@@ -113,7 +112,7 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(Twist, 'cmd_vel', qos=qos_profile_sensor_data)
+    pub = node.create_publisher(Twist, 'cmd_vel', qos_profile=qos_profile_sensor_data)
 
     speed = 0.5
     turn = 1.0
@@ -126,7 +125,7 @@ def main():
     try:
         print(msg)
         print(vels(speed,turn))
-        while(1):
+        while True:
             key = getKey(settings)
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
@@ -174,5 +173,5 @@ def main():
 
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 
-if __name__=="__main__":
+if __name__=='__main__':
     main()
