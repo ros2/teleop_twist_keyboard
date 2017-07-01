@@ -2,7 +2,7 @@
 Generic Keyboard Teleoperation for ROS
 
 #Launch
-To run: `rosrun teleop_twist_keyboard teleop_twist_keyboard.py`
+To run: `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
 
 #Usage
 ```
