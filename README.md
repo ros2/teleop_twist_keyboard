@@ -3,9 +3,7 @@ Generic Keyboard Teleoperation for ROS
 
 ## Launch
 
-To run from Debian packages: `/opt/ros/r2b2/lib/teleop_twist_keyboard/teleop_twist_keyboard`
-
-To run in a from-source workspace: `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
+To run: `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
 
 ## Usage
 
