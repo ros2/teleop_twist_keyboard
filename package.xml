@@ -13,8 +13,6 @@
 
   <url type="website">http://wiki.ros.org/teleop_twist_keyboard</url>
 
-  <build_depend>ament_python</build_depend>
-
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>rclpy</exec_depend>
 

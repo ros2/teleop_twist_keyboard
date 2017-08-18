@@ -1,10 +1,6 @@
-from ament_python.data_files import get_data_files
-from ament_python.script_dir import install_scripts_to_libexec
 from setuptools import setup
 
 package_name = 'teleop_twist_keyboard'
-data_files = get_data_files(package_name)
-install_scripts_to_libexec(package_name)
 
 setup(
     name=package_name,
@@ -13,7 +9,11 @@ setup(
     py_modules=[
         'teleop_twist_keyboard'
     ],
-    data_files=data_files,
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('shared/' + package_name, ['package.xml']),
+    ],
     install_requires=['setuptools'],
     maintainer='Austin Hendrix',
     maintainer_email='namniart@gmail.com',
