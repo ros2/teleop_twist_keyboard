@@ -12,7 +12,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
-        ('shared/' + package_name, ['package.xml']),
+        ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
     maintainer='Austin Hendrix',
