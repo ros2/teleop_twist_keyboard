@@ -2,17 +2,19 @@
 <package format="2">
   <name>teleop_twist_keyboard</name>
   <version>2.0.0</version>
-  <license>BSD License 2.0</license>
   <description>
     A robot-agnostic teleoperation node to convert keyboard commands to Twist
     messages.
   </description>
 
   <maintainer email="clalancette@openrobotics.org">Chris Lalancette</maintainer>
-  <author email="namniart@gmail.com">Austin Hendrix</author>
-  <author>Graylin Trevor Jay</author>
+
+  <license>BSD License 2.0</license>
 
   <url type="website">http://wiki.ros.org/teleop_twist_keyboard</url>
+
+  <author email="namniart@gmail.com">Austin Hendrix</author>
+  <author>Graylin Trevor Jay</author>
 
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>rclpy</exec_depend>
