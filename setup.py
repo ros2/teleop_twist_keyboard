@@ -18,7 +18,6 @@ setup(
     maintainer='Chris Lalancette',
     maintainer_email='clalancette@openrobotics.org',
     author='Graylin Trevor Jay, Austin Hendrix',
-    author_email='namniart@gmail.com',
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
