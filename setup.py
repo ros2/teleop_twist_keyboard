@@ -4,7 +4,7 @@ package_name = 'teleop_twist_keyboard'
 
 setup(
     name=package_name,
-    version='0.6.0',
+    version='2.0.0',
     packages=[],
     py_modules=[
         'teleop_twist_keyboard'
@@ -15,9 +15,10 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
-    maintainer='Austin Hendrix',
-    maintainer_email='namniart@gmail.com',
-    author='Graylin Trevor Jay',
+    maintainer='Chris Lalancette',
+    maintainer_email='clalancette@openrobotics.org',
+    author='Graylin Trevor Jay, Austin Hendrix',
+    author_email='namniart@gmail.com',
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
