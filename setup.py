@@ -15,6 +15,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
+    zip_safe=True,
     maintainer='Chris Lalancette',
     maintainer_email='clalancette@openrobotics.org',
     author='Graylin Trevor Jay, Austin Hendrix',
