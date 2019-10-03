@@ -39,7 +39,6 @@ import tty
 from geometry_msgs.msg import Twist
 
 import rclpy
-from rclpy.qos import qos_profile_default
 
 msg = """
 This node takes keypresses from the keyboard and publishes them
@@ -117,8 +116,7 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(
-        Twist, 'cmd_vel', qos_profile=qos_profile_default)
+    pub = node.create_publisher(Twist, 'cmd_vel', 10)
 
     speed = 0.5
     turn = 1.0
