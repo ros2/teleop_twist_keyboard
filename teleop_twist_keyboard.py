@@ -33,12 +33,16 @@
 
 import select
 import sys
-import termios
-import tty
 
-from geometry_msgs.msg import Twist
-
+import geometry_msgs.msg
 import rclpy
+
+if sys.platform == 'win32':
+    import msvcrt
+else:
+    import termios
+    import tty
+
 
 msg = """
 This node takes keypresses from the keyboard and publishes them
@@ -99,11 +103,26 @@ speedBindings = {
 
 
 def getKey(settings):
-    tty.setraw(sys.stdin.fileno())
-    select.select([sys.stdin], [], [], 0)
-    key = sys.stdin.read(1)
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    if sys.platform == 'win32':
+        key = chr(ord(msvcrt.getch()))
+    else:
+        tty.setraw(sys.stdin.fileno())
+        select.select([sys.stdin], [], [], 0)
+        key = sys.stdin.read(1)
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
+
+
+def saveTerminalSettings():
+    if sys.platform == 'win32':
+        return None
+    return termios.tcgetattr(sys.stdin)
+
+
+def restoreTerminalSettings(old_settings):
+    if sys.platform == 'win32':
+        return
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 
 def vels(speed, turn):
@@ -111,12 +130,12 @@ def vels(speed, turn):
 
 
 def main():
-    settings = termios.tcgetattr(sys.stdin)
+    settings = saveTerminalSettings()
 
     rclpy.init()
 
     node = rclpy.create_node('teleop_twist_keyboard')
-    pub = node.create_publisher(Twist, 'cmd_vel', 10)
+    pub = node.create_publisher(geometry_msgs.msg.Twist, 'cmd_vel', 10)
 
     speed = 0.5
     turn = 1.0
@@ -152,7 +171,7 @@ def main():
                 if (key == '\x03'):
                     break
 
-            twist = Twist()
+            twist = geometry_msgs.msg.Twist()
             twist.linear.x = x * speed
             twist.linear.y = y * speed
             twist.linear.z = z * speed
@@ -165,7 +184,7 @@ def main():
         print(e)
 
     finally:
-        twist = Twist()
+        twist = geometry_msgs.msg.Twist()
         twist.linear.x = 0.0
         twist.linear.y = 0.0
         twist.linear.z = 0.0
@@ -174,7 +193,7 @@ def main():
         twist.angular.z = 0.0
         pub.publish(twist)
 
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+        restoreTerminalSettings(settings)
 
 
 if __name__ == '__main__':
