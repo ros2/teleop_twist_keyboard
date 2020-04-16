@@ -104,10 +104,11 @@ speedBindings = {
 
 def getKey(settings):
     if sys.platform == 'win32':
-        key = chr(ord(msvcrt.getch()))
+        # getwch() returns a string on Windows
+        key = msvcrt.getwch()
     else:
         tty.setraw(sys.stdin.fileno())
-        select.select([sys.stdin], [], [], 0)
+        # sys.stdin.read() returns a string on Linux
         key = sys.stdin.read(1)
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
