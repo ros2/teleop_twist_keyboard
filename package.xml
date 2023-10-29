@@ -11,8 +11,6 @@
 
   <license>BSD License 2.0</license>
 
-  <url type="website">http://wiki.ros.org/teleop_twist_keyboard</url>
-
   <author email="namniart@gmail.com">Austin Hendrix</author>
   <author>Graylin Trevor Jay</author>
 
