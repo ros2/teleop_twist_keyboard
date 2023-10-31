@@ -32,10 +32,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import threading
 
 import geometry_msgs.msg
 import rclpy
-import threading
 
 if sys.platform == 'win32':
     import msvcrt
