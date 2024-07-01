@@ -39,6 +39,11 @@ w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 
 CTRL-C to quit
+
+A .yaml file can be provided to change the bindings above.
+Examples are provided in the config file for the default
+configuration and one with a WASD like mapping.
+
 ```
 
 ## Parameters
@@ -46,3 +51,5 @@ CTRL-C to quit
   - If false (the default), publish a `geometry_msgs/msg/Twist` message.  If true, publish a `geometry_msgs/msg/TwistStamped` message.
 - `frame_id (string, default: '')`
   - When `stamped` is true, the frame_id to use when publishing the `geometry_msgs/msg/TwistStamped` message.
+- `key_mappings_file (string, default: '')`
+  - If provided, will use the mappings from the file. Otherwise it defaults to the classical mappings.

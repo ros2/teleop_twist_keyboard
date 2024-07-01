@@ -36,6 +36,8 @@ import threading
 
 import geometry_msgs.msg
 import rclpy
+import yaml
+import rclpy.parameter
 
 if sys.platform == 'win32':
     import msvcrt
@@ -44,62 +46,138 @@ else:
     import tty
 
 
-msg = """
-This node takes keypresses from the keyboard and publishes them
-as Twist/TwistStamped messages. It works best with a US keyboard layout.
----------------------------
-Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
+class KeyMapper:
 
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    <    >
+    def __init__(self, mappings_file):
+        self._mappings_file = mappings_file
 
-t : up (+z)
-b : down (-z)
+        # Declare default lexical mappings
+        self._key_mappings = {
+            'speed_up': 'q',
+            'speed_down': 'z',
+            'linear_speed_up': 'w',
+            'linear_speed_down': 'x',
+            'angular_speed_up': 'e',
+            'angular_speed_down': 'c',
+            'forward': 'i',
+            'forward_right': 'o',
+            'turn_left': 'j',
+            'turn_right': 'l',
+            'forward_left': 'u',
+            'backward': ',',
+            'backward_right': '.',
+            'backward_left': 'm',
+            'forward_right_strafe': 'O',
+            'forward_strafe': 'I',
+            'strafe_left': 'J',
+            'strafe_right': 'L',
+            'forward_left_strafe': 'U',
+            'backward_strafe': '<',
+            'backward_right_strafe': '>',
+            'backward_left_strafe': 'M',
+            'up': 't',
+            'down': 'b'
+        }
 
-anything else : stop
+        self.read_keymapping(mappings_file)
 
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
+        self.create_bindings()
 
-CTRL-C to quit
-"""
+    def create_bindings(self):
+        self._move_bindings = {
+            self._key_mappings['forward']: (1, 0, 0, 0),
+            self._key_mappings['forward_right']: (1, 0, 0, -1),
+            self._key_mappings['turn_left']: (0, 0, 0, 1),
+            self._key_mappings['turn_right']: (0, 0, 0, -1),
+            self._key_mappings['forward_left']: (1, 0, 0, 1),
+            self._key_mappings['backward']: (-1, 0, 0, 0),
+            self._key_mappings['backward_right']: (-1, 0, 0, 1),
+            self._key_mappings['backward_left']: (-1, 0, 0, -1),
+            self._key_mappings['forward_right_strafe']: (1, -1, 0, 0),
+            self._key_mappings['forward_strafe']: (1, 0, 0, 0),
+            self._key_mappings['strafe_left']: (0, 1, 0, 0),
+            self._key_mappings['strafe_right']: (0, -1, 0, 0),
+            self._key_mappings['forward_left_strafe']: (1, 1, 0, 0),
+            self._key_mappings['backward_strafe']: (-1, 0, 0, 0),
+            self._key_mappings['backward_right_strafe']: (-1, -1, 0, 0),
+            self._key_mappings['backward_left_strafe']: (-1, 1, 0, 0),
+            self._key_mappings['up']: (0, 0, 1, 0),
+            self._key_mappings['down']: (0, 0, -1, 0),
+        }
 
-moveBindings = {
-    'i': (1, 0, 0, 0),
-    'o': (1, 0, 0, -1),
-    'j': (0, 0, 0, 1),
-    'l': (0, 0, 0, -1),
-    'u': (1, 0, 0, 1),
-    ',': (-1, 0, 0, 0),
-    '.': (-1, 0, 0, 1),
-    'm': (-1, 0, 0, -1),
-    'O': (1, -1, 0, 0),
-    'I': (1, 0, 0, 0),
-    'J': (0, 1, 0, 0),
-    'L': (0, -1, 0, 0),
-    'U': (1, 1, 0, 0),
-    '<': (-1, 0, 0, 0),
-    '>': (-1, -1, 0, 0),
-    'M': (-1, 1, 0, 0),
-    't': (0, 0, 1, 0),
-    'b': (0, 0, -1, 0),
-}
+        self._speed_bindings = {
+            self._key_mappings['speed_up']: (1.1, 1.1),
+            self._key_mappings['speed_down']: (.9, .9),
+            self._key_mappings['linear_speed_up']: (1.1, 1),
+            self._key_mappings['linear_speed_down']: (.9, 1),
+            self._key_mappings['angular_speed_up']: (1, 1.1),
+            self._key_mappings['angular_speed_down']: (1, .9),
+        }
 
-speedBindings = {
-    'q': (1.1, 1.1),
-    'z': (.9, .9),
-    'w': (1.1, 1),
-    'x': (.9, 1),
-    'e': (1, 1.1),
-    'c': (1, .9),
-}
+    def read_keymapping(self, file):
+        if file is None:
+            return
+
+        with open(file, 'r') as f:
+            config = yaml.safe_load(f)
+
+        # Check there are not repeated values
+        if len(list(config.values())) != len(set(config.values())):
+            raise RuntimeError("Repeated keys in the yaml file.")
+
+        self._key_mappings.update(config)
+
+        # Check the new mappings don't have repeated values
+        if len(list(self._key_mappings.values())) \
+                != len(set(self._key_mappings.values())):
+            raise RuntimeError("Repeated elements in the mappings.")
+
+    def speed_bindings(self):
+        return self._speed_bindings
+
+    def move_bindings(self):
+        return self._move_bindings
+
+    def msg(self):
+        return (
+            '---------------------------\n'
+            'Moving around:\n'
+            f'{self._key_mappings["forward_left"]}    '
+            f'{self._key_mappings["forward"]}    '
+            f'{self._key_mappings["forward_right"]}\n'
+            f'{self._key_mappings["turn_left"]}         '
+            f'{self._key_mappings["turn_right"]}\n'
+            f'{self._key_mappings["backward_left"]}    '
+            f'{self._key_mappings["backward"]}    '
+            f'{self._key_mappings["backward_right"]}\n'
+            '\n'
+            'For Holonomic mode (strafing), hold down the shift key:\n'
+            '---------------------------\n'
+            f'{self._key_mappings["forward_left_strafe"]}    '
+            f'{self._key_mappings["forward_strafe"]}    '
+            f'{self._key_mappings["forward_right_strafe"]}\n'
+            f'{self._key_mappings["strafe_left"]}         '
+            f'{self._key_mappings["strafe_right"]}\n'
+            f'{self._key_mappings["backward_left_strafe"]}    '
+            f'{self._key_mappings["backward_strafe"]}    '
+            f'{self._key_mappings["backward_right_strafe"]}\n'
+            '\n'
+            f'{self._key_mappings["up"]} : up (+z)\n'
+            f'{self._key_mappings["down"]} : down (-z)\n'
+            '\n'
+            'anything else : stop\n'
+            '\n'
+            f'{self._key_mappings["speed_up"]}/'
+            f'{self._key_mappings["speed_down"]} : '
+            'increase/decrease max speeds by 10%\n'
+            f'{self._key_mappings["linear_speed_up"]}/'
+            f'{self._key_mappings["linear_speed_down"]} : '
+            'increase/decrease only linear speed by 10%\n'
+            f'{self._key_mappings["angular_speed_up"]}/'
+            f'{self._key_mappings["angular_speed_down"]} : '
+            'increase/decrease only angular speed by 10%\n'
+            '\n'
+            'CTRL-C to quit\n')
 
 
 def getKey(settings):
@@ -140,6 +218,13 @@ def main():
     # parameters
     stamped = node.declare_parameter('stamped', False).value
     frame_id = node.declare_parameter('frame_id', '').value
+    key_mappings_file = node.declare_parameter(
+        'key_mappings_file', rclpy.parameter.Parameter.Type.STRING).value
+    key_mapper = KeyMapper(key_mappings_file)
+
+    moveBindings = key_mapper.move_bindings()
+    speedBindings = key_mapper.speed_bindings()
+
     if not stamped and frame_id:
         raise Exception("'frame_id' can only be set when 'stamped' is True")
 
@@ -171,7 +256,7 @@ def main():
         twist = twist_msg
 
     try:
-        print(msg)
+        print(key_mapper.msg())
         print(vels(speed, turn))
         while True:
             key = getKey(settings)
@@ -186,7 +271,7 @@ def main():
 
                 print(vels(speed, turn))
                 if (status == 14):
-                    print(msg)
+                    print(key_mapper.msg())
                 status = (status + 1) % 15
             else:
                 x = 0.0
