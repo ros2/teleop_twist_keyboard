@@ -35,6 +35,7 @@ import sys
 import threading
 
 import geometry_msgs.msg
+import rcl_interfaces.msg
 import rclpy
 
 if sys.platform == 'win32':
@@ -127,7 +128,30 @@ def restoreTerminalSettings(old_settings):
 
 
 def vels(speed, turn):
-    return 'currently:\tspeed %s\tturn %s ' % (speed, turn)
+    return 'currently:\tspeed %.2f\tturn %.2f ' % (speed, turn)
+
+
+def check_param_changes(parameter_list):
+    retval = rcl_interfaces.msg.SetParametersResult()
+    retval.successful = True
+    for param in parameter_list:
+        if param.name == 'stamped':
+            retval.successful = False
+            retval.reason = 'Cannot change stamped attribute at runtime'
+            break
+        elif param.name == 'frame_id':
+            retval.successful = False
+            retval.reason = 'Cannot change frame_id at runtime'
+            break
+        elif param.name == 'speed':
+            retval.successful = False
+            retval.reason = 'Cannot change speed at runtime with parameter (use the keyboard)'
+            break
+        elif param.name == 'turn':
+            retval.successful = False
+            retval.reason = 'Cannot change turn speed at runtime with parameter (use the keyboard)'
+
+    return retval
 
 
 def main():
@@ -142,6 +166,8 @@ def main():
     frame_id = node.declare_parameter('frame_id', '').value
     speed = node.declare_parameter('speed', 0.5).value
     turn = node.declare_parameter('turn', 1.0).value
+
+    node.add_on_set_parameters_callback(check_param_changes)
 
     if not stamped and frame_id:
         raise Exception("'frame_id' can only be set when 'stamped' is True")
