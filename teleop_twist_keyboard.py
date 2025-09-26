@@ -131,29 +131,6 @@ def vels(speed, turn):
     return 'currently:\tspeed %.2f\tturn %.2f ' % (speed, turn)
 
 
-def check_param_changes(parameter_list):
-    retval = rcl_interfaces.msg.SetParametersResult()
-    retval.successful = True
-    for param in parameter_list:
-        if param.name == 'stamped':
-            retval.successful = False
-            retval.reason = 'Cannot change stamped attribute at runtime'
-            break
-        elif param.name == 'frame_id':
-            retval.successful = False
-            retval.reason = 'Cannot change frame_id at runtime'
-            break
-        elif param.name == 'speed':
-            retval.successful = False
-            retval.reason = 'Cannot change speed at runtime with parameter (use the keyboard)'
-            break
-        elif param.name == 'turn':
-            retval.successful = False
-            retval.reason = 'Cannot change turn speed at runtime with parameter (use the keyboard)'
-
-    return retval
-
-
 def main():
     settings = saveTerminalSettings()
 
@@ -162,12 +139,11 @@ def main():
     node = rclpy.create_node('teleop_twist_keyboard')
 
     # parameters
-    stamped = node.declare_parameter('stamped', False).value
-    frame_id = node.declare_parameter('frame_id', '').value
-    speed = node.declare_parameter('speed', 0.5).value
-    turn = node.declare_parameter('turn', 1.0).value
-
-    node.add_on_set_parameters_callback(check_param_changes)
+    read_only_descriptor = rcl_interfaces.msg.ParameterDescriptor(read_only=True)
+    stamped = node.declare_parameter('stamped', False, read_only_descriptor).value
+    frame_id = node.declare_parameter('frame_id', '', read_only_descriptor).value
+    speed = node.declare_parameter('speed', 0.5, read_only_descriptor).value
+    turn = node.declare_parameter('turn', 1.0, read_only_descriptor).value
 
     if not stamped and frame_id:
         raise Exception("'frame_id' can only be set when 'stamped' is True")
