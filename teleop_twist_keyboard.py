@@ -191,6 +191,7 @@ def main():
                 if (status == 14):
                     print(msg)
                 status = (status + 1) % 15
+                continue
             else:
                 x = 0.0
                 y = 0.0
