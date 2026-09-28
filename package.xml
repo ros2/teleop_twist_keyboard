@@ -9,7 +9,7 @@
 
   <maintainer email="clalancette@openrobotics.org">Chris Lalancette</maintainer>
 
-  <license>BSD License 2.0</license>
+  <license>BSD-3-Clause</license>
 
   <author email="namniart@gmail.com">Austin Hendrix</author>
   <author>Graylin Trevor Jay</author>
